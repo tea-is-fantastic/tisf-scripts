@@ -5,6 +5,9 @@ const stream = require('stream');
 const axios = require("axios");
 const {src} = require("./vars");
 const pipeline = util.promisify(stream.pipeline);
+const replace = require('replace-in-file');
+const regexpTree = require('regexp-tree');
+
 
 const downloadFile = async (loc, pth, responseType='stream') => {
   try {
@@ -41,7 +44,7 @@ const projectDir = () => {
   }
 }
 
-const url_gen = (gen, temp) => `https://raw.githubusercontent.com/t-i-f/generators-${gen}/main/${temp}/`
+const url_gen = (repo, name) => `https://raw.githubusercontent.com/t-i-f/${repo}/main/${name}/`
 
 const objify = (vars, vals) => {
   const output = {}
@@ -51,4 +54,26 @@ const objify = (vars, vals) => {
   return output;
 }
 
-module.exports = {downloadFile, downloadAsTxt, projectDir, url_gen, objify};
+async function regexReplace(files, re, rep, already, callback){
+  try {
+    const filecont = await fs.promises.readFile(files, 'utf-8');
+    if (already && filecont.includes(already)) {
+      return;
+    }
+    const reg = regexpTree.toRegExp(re);
+    let to = rep;
+    if (callback) {
+      to = input => callback(input.replace(reg, rep));
+    }
+    const results = await replace({
+      files,
+      from: reg,
+      to,
+    });
+    console.log('Replacement results:', results);
+  } catch (error) {
+    console.error('Error occurred:', error);
+  }
+}
+
+module.exports = {downloadFile, downloadAsTxt, projectDir, url_gen, objify, regexReplace};
