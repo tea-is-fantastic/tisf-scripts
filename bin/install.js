@@ -27,7 +27,7 @@ async function edit(y, i, url) {
         return z
     })
     const pth = path.join(...n)
-    const filecont = fs.readFileSync(await downloadAsTxt(url + String(i)));
+    const filecont = await downloadAsTxt(url + String(i));
     await molecule(pth, filecont)
 }
 
@@ -44,14 +44,6 @@ async function install() {
     for(let i=0; i<config.edits.length; i++) {
         await edit(config.edits[i], i, url);
     }
-
-    const temp = await downloadAsTxt(url + `template`);
-    const template = Handlebars.compile(temp);
-    const vars = objify(config.variables, variables);
-    const modified = template(vars);
-    await fs.promises.writeFile(path.join(src, config.file), modified);
-
-
 }
 
 module.exports = install;
