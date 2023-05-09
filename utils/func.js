@@ -3,10 +3,12 @@ const {ensureFile} = require('fs-extra');
 const util = require('util');
 const stream = require('stream');
 const axios = require("axios");
-const {src} = require("./vars");
+const {dirs} = require("./vars");
 const pipeline = util.promisify(stream.pipeline);
 const replace = require('replace-in-file');
 const regexpTree = require('regexp-tree');
+const Handlebars = require("handlebars");
+const path = require("path");
 
 
 const downloadFile = async (loc, pth, responseType='stream') => {
@@ -36,9 +38,9 @@ const downloadAsTxt = async (loc) => {
     console.error('download pipeline failed', error);
   }
 }
-const projectDir = () => {
+const projectDir = (where='src') => {
   try {
-    process.chdir(src);
+    process.chdir(dirs[where]);
   } catch (error) {
     console.error('chdir failed', error);
   }
@@ -76,4 +78,21 @@ async function regexReplace(files, re, rep, already, callback){
   }
 }
 
-module.exports = {downloadFile, downloadAsTxt, projectDir, url_gen, objify, regexReplace};
+const normalizePath = (y, vars) => {
+  const n = y.map(z => {
+    let x = z;
+    if (z.indexOf('$') === 0) {
+      x = dirs[z.substring(1)]
+    }
+    if (z.indexOf('{{') >= 0) {
+      const temp = Handlebars.compile(z);
+      x = temp(vars)
+    }
+    return x;
+  })
+  return  path.join(...n);
+}
+
+
+
+module.exports = {downloadFile, downloadAsTxt, projectDir, url_gen, objify, regexReplace, normalizePath};

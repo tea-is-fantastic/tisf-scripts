@@ -1,0 +1,19 @@
+regex:
+  - find: |
+      /^(.*)(minSdkVersion = )(\d{2})(.*)$/m
+    replace: |
+      $1$224$4
+  - find: |
+      /^(.*)(targetSdkVersion.*)$/m
+    replace: |
+      $1$2
+      $1kotlinVersion = '1.6.10'
+    already: |
+      kotlinVersion =
+  - find: |
+      /^(.*)(classpath\("com.android.tools.build:gradle.*)$/m
+    replace: |
+      $1$2
+      $1classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    already: |
+      kotlin-gradle-plugin
