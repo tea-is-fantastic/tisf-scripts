@@ -3,9 +3,9 @@ const script = require("./bin/script");
 const argv = require('minimist')(process.argv.slice(2));
 
 const f = {
-    gen: require("./bin/gen"),
-    install: require("./bin/install"),
-    page: require("./bin/page"),
+    // gen: require("./bin/gen"),
+    // install: require("./bin/install"),
+    // page: require("./bin/page"),
 }
 
 async function setup() {

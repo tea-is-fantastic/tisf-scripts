@@ -11,14 +11,14 @@ async function script() {
     const url = url_gen('scripts', arguments[0]);
     const config = JSON.parse(await downloadAsTxt(url + `config`));
     const vars = {config, args, url};
-    if (config.packages && config.packages.length > 0) {
-        await packages(vars);
-    }
     if (config.edits && config.edits.length > 0) {
         await edits(vars);
     }
     if (config.regex && config.regex.length > 0) {
         await regex(vars);
+    }
+    if (config.packages && config.packages.length > 0) {
+        await packages(vars);
     }
 }
 
