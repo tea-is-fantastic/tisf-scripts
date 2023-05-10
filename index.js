@@ -1,23 +1,29 @@
 #!/usr/bin/env node
-const script = require("./bin/script");
+const YAML = require("yaml");
+const {url_gen, downloadAsTxt, normalize, normalizePath} = require("./utils/func");
 const argv = require('minimist')(process.argv.slice(2));
+const path = require("path");
 
 const f = {
-    // gen: require("./bin/gen"),
-    // install: require("./bin/install"),
-    // page: require("./bin/page"),
+    edit: require("./bin/edit"),
+    regex: require("./bin/regex"),
+    script: require("./bin/script"),
+    install: require("./bin/install"),
 }
 
 async function setup() {
-    // if(argv?._) {
-    //     f[argv._[0]]();
-    // }
+    const arguments = argv._;
+    const args = arguments.slice(1);
+    const url = url_gen('scripts', arguments[0]);
+    const conf = YAML.parse(await downloadAsTxt(url + `config`));
 
-    if(argv?.s) {
-        f[argv.s]();
-        return
+    for (const i of conf.files) {
+        const temp = normalize(await downloadAsTxt(url + i), {args});
+        const config = YAML.parse(temp);
+        const pth = normalizePath(config.path);
+        const vars = {config, args, pth, url};
+        f[config.type](vars);
     }
-    await script();
 }
 
 setup();

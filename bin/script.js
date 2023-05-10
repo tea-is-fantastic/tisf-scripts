@@ -1,26 +1,14 @@
-const {downloadAsTxt, url_gen} = require("../utils/func");
-const edits = require("./edits");
-const regex = require("./regex");
-const packages = require("./packages");
+const util = require('util');
+const {projectDir, normalize, normalizePath} = require("../utils/func");
+const exec = util.promisify(require('child_process').exec);
 
-const argv = require('minimist')(process.argv.slice(2));
-
-async function script() {
-    const arguments = argv._;
-    const args = arguments.slice(1);
-    const url = url_gen('scripts', arguments[0]);
-    const config = JSON.parse(await downloadAsTxt(url + `config`));
-    const vars = {config, args, url};
-    if (config.edits && config.edits.length > 0) {
-        await edits(vars);
-    }
-    if (config.regex && config.regex.length > 0) {
-        await regex(vars);
-    }
-    if (config.packages && config.packages.length > 0) {
-        await packages(vars);
+async function script({config, pth}) {
+    await projectDir(pth);
+    for (const i of config.data) {
+        const {stdout, stderr} = await exec(i);
+        console.log(stdout);
+        console.log(stderr);
     }
 }
-
 
 module.exports = script;
