@@ -18,9 +18,9 @@ async function setup() {
     let args = arguments.slice(1);
     let name = arguments[0];
     if(name === 'download') {
-        const n = name.split('/');
+        const n = args[0].split('/');
         const pth = path.join(dirs.src, args[0] || n[n.length - 1] || 'args.yml')
-        const url = url_gen('scripts', name);
+        const url = url_gen('scripts', args[0], '');
         await fs.ensureFile(pth)
         await fs.writeFile(pth, await downloadAsTxt(url));
         return;

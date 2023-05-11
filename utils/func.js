@@ -43,7 +43,7 @@ const projectDir = (where = 'src') => {
     }
 }
 
-const url_gen = (repo, name) => `https://raw.githubusercontent.com/t-i-f/${repo}/main/${name}/`
+const url_gen = (repo, name, trail='/') => `https://raw.githubusercontent.com/t-i-f/${repo}/main/${name}${trail}`
 
 const objify = (vars, vals) => {
     const output = {}
