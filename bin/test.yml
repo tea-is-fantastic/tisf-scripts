@@ -7,129 +7,48 @@ data: |
 
   import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
   import FontAwesome5ProIcon from 'react-native-vector-icons/FontAwesome5Pro';
-  import { CustomStatusBar, TestScreen } from '@tisf/rn-ui';
+  import { CustomStatusBar, createTestScreen, ITabScreen } from '@tisf/rn-ui';
 
   const Tab = createBottomTabNavigator();
-
-  interface ITabItem {
-    name: string;
-    icon: string;
-    Component: ComponentType;
-  }
-
-  interface ITabScreen {
-    tabs: [ITabItem, ITabItem, ITabItem, ITabItem, ITabItem];
-    header?: boolean;
-  }
 
   const DATA: ITabScreen = {
     tabs: [
       {{#each args.data}}
         {
-          name: {{name}},
+          name: '{{name}}',
           icon: '{{icon}}',
-          Component: () => <TestScreen name={{name}} />,
+          Component: createTestScreen("{{name}}"),
         },
       {{/each}}
     ],
   };
 
-  export const TabScreen = () => {
+  export const {{args.name}}Tabs = () => {
     return (
       <>
         <Tab.Navigator
           screenOptions=\{{ headerShown: !!DATA.header }}
           backBehavior="none"
         >
+          {{#each args.data}}
           <Tab.Screen
-            name={`${DATA.tabs[0].name}Tab`}
-            key={0}
-            component={DATA.tabs[0].Component}
+            name="{{name}}Tab"
+            key=\{{{@index}}}
+            component={createTestScreen("{{name}}")}
             options=\{{
-              tabBarLabel: DATA.tabs[0].name,
-              title: DATA.tabs[0].name,
+              tabBarLabel: {{name}},
+              title: {{name}},
               tabBarIcon: ({ size, color }) => (
                 <FontAwesome5ProIcon
                   light
-                  name={DATA.tabs[0].icon}
+                  name=\{{{icon}}}
                   color={color}
                   size={size}
                 />
               ),
             }}
           />
-
-          <Tab.Screen
-            name={`${DATA.tabs[1].name}Tab`}
-            key={1}
-            component={DATA.tabs[1].Component}
-            options=\{{
-              tabBarLabel: DATA.tabs[1].name,
-              title: DATA.tabs[1].name,
-              tabBarIcon: ({ size, color }) => (
-                <FontAwesome5ProIcon
-                  light
-                  name={DATA.tabs[1].icon}
-                  color={color}
-                  size={size}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name={`${DATA.tabs[2].name}Tab`}
-            key={2}
-            component={DATA.tabs[2].Component}
-            options=\{{
-              tabBarLabel: DATA.tabs[2].name,
-              title: DATA.tabs[2].name,
-              tabBarIcon: ({ size, color }) => (
-                <FontAwesome5ProIcon
-                  light
-                  name={DATA.tabs[2].icon}
-                  color={color}
-                  size={size}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name={`${DATA.tabs[3].name}Tab`}
-            key={3}
-            component={DATA.tabs[3].Component}
-            options=\{{
-              tabBarLabel: DATA.tabs[3].name,
-              title: DATA.tabs[3].name,
-              tabBarIcon: ({ size, color }) => (
-                <FontAwesome5ProIcon
-                  light
-                  name={DATA.tabs[3].icon}
-                  color={color}
-                  size={size}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name={`${DATA.tabs[4].name}Tab`}
-            key={4}
-            component={DATA.tabs[4].Component}
-            options=\{{
-              tabBarLabel: DATA.tabs[4].name,
-              title: DATA.tabs[4].name,
-              tabBarIcon: ({ size, color }) => (
-                <FontAwesome5ProIcon
-                  light
-                  name={DATA.tabs[4].icon}
-                  color={color}
-                  size={size}
-                />
-              ),
-            }}
-          />
+          {{/each}}
         </Tab.Navigator>
         <CustomStatusBar
           barStyle="dark-content"

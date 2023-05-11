@@ -17,6 +17,13 @@ async function setup() {
     const arguments = argv._;
     let args = arguments.slice(1);
     let name = arguments[0];
+    if(name === 'download') {
+        const pth = path.join(dirs.src, args[0] || 'args.yml')
+        const url = url_gen('scripts', name);
+        await fs.ensureFile(pth)
+        await fs.writeFile(pth, await downloadAsTxt(url));
+        return;
+    }
     if(name === 'args') {
         args = YAML.parse(await fs.readFile(path.join(dirs.src, 'args.yml'), 'utf8'));
         name = args.script;
